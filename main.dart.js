@@ -54764,7 +54764,7 @@ p=$.a4r
 o=q.y
 n=t.T
 s=2
-return P.ab(G.akO("http://104.211.73.17:8080/translator/translate",C.aY.fU(H.d([P.av(["src",p[o],"id",o],n,t.tw)],t.be)),P.av(["Content-type","application/json"],n,n)),$async$oh)
+return P.ab(G.akO("https://104.211.73.17:8080/translator/translate",C.aY.fU(H.d([P.av(["src",p[o],"id",o],n,t.tw)],t.be)),P.av(["Content-type","application/json"],n,n)),$async$oh)
 case 2:m=c
 n=m.e
 o=B.a9U(U.a8Z(n).c.a.h(0,"charset"))
