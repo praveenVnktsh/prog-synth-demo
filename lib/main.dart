@@ -63,19 +63,26 @@ class LargeChild extends StatefulWidget {
 class _LargeChildState extends State<LargeChild> {
   var _exampleCode =
       "num = 7\r\nfactorial = 1\r\nif num < 0:\r\n   print(\"Sorry, factorial does not exist for negative numbers\")\r\nelif num == 0:\r\n   print(\"The factorial of 0 is 1\")\r\nelse:\r\n   for i in range(1,num + 1):\r\n       factorial = factorial*i\r\n   print(\"The factorial of\",num,\"is\",factorial)";
-  var buttons = [false, true, false];
+  var buttons = [true, false];
   var loading = false;
+  var stage1 = true;
   final textcontroller = TextEditingController();
-  var active = 1;
+  int active = 0;
   var forward = false;
 
   void request() async {
     loading = !loading;
     setState(() {});
-    var response = await http
-        .post(pingUrl, body: {'src': descriptions[active], 'id': active});
+    // var req = "[{'src': ${descriptions[active]}, 'id': $active}]";
+    var body = json.encode([
+      {'src': descriptions[active], 'id': active}
+    ]);
+    var response = await http.post(pingUrl,
+        body: body, headers: {"Content-type": 'application/json'});
+    print("${json.decode(response.body)[0][0]}");
 
-    _exampleCode = json.decode(response.body)['form']['name'];
+    _exampleCode = json.decode(response.body)[0][0]['tgt'];
+
     loading = !loading;
     setState(() {});
   }
@@ -109,35 +116,18 @@ class _LargeChildState extends State<LargeChild> {
                             SizedBox(width: 10),
                             RaisedButton(
                               onPressed: () {
-                                active = 1;
+                                if (stage1) {
+                                  active = 0;
+                                } else {
+                                  active = 1;
+                                }
                                 textcontroller.clear();
                                 setState(() {});
                               },
                               textColor: Colors.white,
-                              color:
-                                  active == 1 ? primaryColor : secondaryColor,
-                              padding: const EdgeInsets.all(0.0),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0)),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(16.0, 8, 16, 8),
-                                child: Text(
-                                  "NAPS",
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            RaisedButton(
-                              onPressed: () {
-                                active = 2;
-                                textcontroller.clear();
-                                setState(() {});
-                              },
-                              textColor: Colors.white,
-                              color:
-                                  active == 2 ? primaryColor : secondaryColor,
+                              color: active == 1 || active == 0
+                                  ? primaryColor
+                                  : secondaryColor,
                               padding: const EdgeInsets.all(0.0),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8.0)),
@@ -151,18 +141,67 @@ class _LargeChildState extends State<LargeChild> {
                               ),
                             ),
                             SizedBox(width: 10),
-                            // CustomSwitch(
-                            //   activeColor: primaryColor,
-                            //   value: forward,
-                            //   onChanged: (value) {
-                            //     print("VALUE : $value");
-                            //     setState(() {
-                            //       // status = value;
-                            //       forward = value;
-                            //     });
-                            //   },
-                            // ),
+                            RaisedButton(
+                              onPressed: () {
+                                if (stage1) {
+                                  active = 2;
+                                } else {
+                                  active = 3;
+                                }
+
+                                textcontroller.clear();
+                                setState(() {});
+                              },
+                              textColor: Colors.white,
+                              color: active == 2 || active == 3
+                                  ? primaryColor
+                                  : secondaryColor,
+                              padding: const EdgeInsets.all(0.0),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8.0)),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(16.0, 8, 16, 8),
+                                child: Text(
+                                  "NAPS",
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
                           ]),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(stage1 == false
+                            ? "Code to Description"
+                            : "Description to Code"),
+                        Switch(
+                          value: stage1,
+                          onChanged: (bool isOn) {
+                            setState(() {
+                              stage1 = isOn;
+                              if (stage1) {
+                                if (active == 1) {
+                                  active = 0;
+                                } else {
+                                  active = 2;
+                                }
+                              } else {
+                                if (active == 0) {
+                                  active = 1;
+                                } else {
+                                  active = 3;
+                                }
+                              }
+                            });
+                          },
+                          activeColor: primaryColor,
+                          inactiveThumbColor: secondaryColor,
+                        ),
+                      ],
                     ),
                     Container(
                       height: 100,
