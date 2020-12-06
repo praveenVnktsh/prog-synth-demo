@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 var primaryColor = Color(0xFF93c845);
 var secondaryColor = Color(0xFF052744);
 
-var pingUrl = 'http://104.211.73.17:8080/translator/translate';
+var pingUrl = 'https://104.211.73.17:8080/translator/translate';
 
 //var pingUrl = "http://$HOST:$PORT$URL_ROOT/translate";
 
